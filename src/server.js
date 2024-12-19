@@ -4,7 +4,7 @@ import { ENV, PORT } from "./config/secrets.js";
 const app = express();
 
 app.get("/", (req, res) => {
-  res.send("Hello");
+  res.status(200).json({ message: "Hello" });
 });
 
 app.listen(PORT, () => {
