@@ -1,4 +1,5 @@
 import express from "express";
+import { ENV, PORT } from "./config/secrets.js";
 
 const app = express();
 
@@ -6,6 +7,6 @@ app.get("/", (req, res) => {
   res.send("Hello");
 });
 
-app.listen(2025, () => {
-  console.log("Server is up and running on port 2025");
+app.listen(PORT, () => {
+  console.log(`Server is up and running on port ${PORT} in ${ENV} mode`);
 });
