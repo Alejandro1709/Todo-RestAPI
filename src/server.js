@@ -4,6 +4,8 @@ import { ENV, PORT } from "./config/secrets.js";
 
 const app = express();
 
+app.use(express.json());
+
 app.use("/api/v1/todos", todoRoutes);
 
 app.get("/", (req, res) => {
