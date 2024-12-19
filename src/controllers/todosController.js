@@ -12,5 +12,10 @@ const todos = [
 ];
 
 export const getTodos = (req, res) => {
-  res.status(200).json(todos);
+  res.status(200).json({
+    data: todos,
+    page: 1,
+    limit: 10,
+    total: todos.length,
+  });
 };
