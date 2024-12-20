@@ -1,10 +1,15 @@
 import express from "express";
 import todoRoutes from "./routes/todoRoutes.js";
 import { ENV, PORT } from "./config/secrets.js";
+import morgan from "morgan";
 
 const app = express();
 
 app.use(express.json());
+
+if (ENV === "development") {
+  app.use(morgan("dev"));
+}
 
 app.use("/api/v1/todos", todoRoutes);
 
@@ -13,5 +18,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is up and running on port ${PORT} in ${ENV} mode`);
+  console.log(`🚀 Server is up and running on port ${PORT} in ${ENV} mode`);
 });
