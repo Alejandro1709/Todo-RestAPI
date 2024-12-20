@@ -1,51 +1,55 @@
 import Todo from "../models/Todo.js";
-
+import { pool } from "../config/db.js";
 const todos = [];
 
-export const getTodos = (req, res) => {
+export const getTodos = async (req, res) => {
+  const { rows } = await pool.query("SELECT * FROM todos");
+
   res.status(200).json({
-    data: todos,
-    total: todos.length,
+    data: rows,
+    total: rows.length,
   });
 };
 
-export const getTodo = (req, res) => {
+export const getTodo = async (req, res) => {
   const { id } = req.params;
 
-  const foundTodo = todos.find((t) => t.id === +id);
+  const { rows } = await pool.query("SELECT * FROM todos WHERE id = $1", [id]);
 
-  res.status(200).json(foundTodo);
+  if (rows.length === 0) {
+    return res.status(404).json({ message: "Todo not found" });
+  }
+
+  res.status(200).json(rows[0]);
 };
 
-export const createTodo = (req, res) => {
+export const createTodo = async (req, res) => {
   const { title, description } = req.body;
 
-  const newTodo = new Todo(title, description);
+  const { rows } = await pool.query(
+    "INSERT INTO todos (title, description) VALUES ($1, $2) RETURNING *",
+    [title, description]
+  );
 
-  todos.push(newTodo);
-
-  res.status(201).json(newTodo);
+  res.status(201).json(rows[0]);
 };
 
-export const updateTodo = (req, res) => {
+export const updateTodo = async (req, res) => {
   const { id } = req.params;
   const { title, description } = req.body;
 
-  const foundTodoIdx = todos.findIndex((p) => p.id === +id);
-  const foundTodo = todos[foundTodoIdx];
+  const { rows } = await pool.query(
+    "UPDATE todos SET title = $1, description = $2 WHERE id = $3 RETURNING *",
+    [title, description, id]
+  );
 
-  foundTodo.title = title || foundTodo.title;
-  foundTodo.description = description || foundTodo.description;
-
-  res.status(200).json(foundTodo);
+  res.status(200).json(rows[0]);
 };
 
-export const deleteTodo = (req, res) => {
+export const deleteTodo = async (req, res) => {
   const { id } = req.params;
 
-  const todoIdx = todos.findIndex((t) => t.id == +id);
-
-  todos.splice(todoIdx, 1);
+  await pool.query("DELETE FROM todos WHERE id = $1", [id]);
 
   res.status(204).json({ message: "Removed" });
 };

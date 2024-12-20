@@ -1,4 +1,4 @@
-import { Pool } from "pg";
+import pg from "pg";
 import {
   PG_DATABASE,
   PG_HOST,
@@ -7,7 +7,7 @@ import {
   PG_USER,
 } from "./secrets.js";
 
-export const pool = new Pool({
+export const pool = new pg.Pool({
   user: PG_USER,
   host: PG_HOST,
   password: PG_PASSWORD,
